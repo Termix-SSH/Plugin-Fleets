@@ -1,5 +1,5 @@
-import { getErrorMessage } from "../../../src/backend/utils/error-message.js";
-import type { AuthenticatedRequest } from "../../../src/types/index.js";
+import { getErrorMessage } from "../../../../src/backend/utils/error-message.js";
+import type { AuthenticatedRequest } from "../../../../src/types/index.js";
 import express, { type Request, type Response } from "express";
 import multer from "multer";
 import JSZip from "jszip";
@@ -7,43 +7,43 @@ import type { Client, SFTPWrapper } from "ssh2";
 import {
   authLogger,
   databaseLogger,
-} from "../../../src/backend/utils/logger.js";
-import { AuthManager } from "../../../src/backend/utils/auth-manager.js";
+} from "../../../../src/backend/utils/logger.js";
+import { AuthManager } from "../../../../src/backend/utils/auth-manager.js";
 import {
   PermissionManager,
   type HostAction,
-} from "../../../src/backend/utils/permission-manager.js";
+} from "../../../../src/backend/utils/permission-manager.js";
 import {
   isSharePermissionLevel,
   expiryFromDuration,
   parseShareTargets,
-} from "../../../src/backend/database/routes/rbac.js";
+} from "../../../../src/backend/database/routes/rbac.js";
 import {
   createCurrentFleetRepository,
   createCurrentFleetInventoryRepository,
   createCurrentRbacAccessRepository,
   createCurrentRoleRepository,
   createCurrentUserRepository,
-} from "../../../src/backend/database/repositories/factory.js";
-import { resolveHostById } from "../../../src/backend/hosts/host-resolver.js";
+} from "../../../../src/backend/database/repositories/factory.js";
+import { resolveHostById } from "../../../../src/backend/hosts/host-resolver.js";
 import {
   getFleetPoolKey,
   createFleetSshFactory,
-} from "../../../src/backend/hosts/ssh-client-factory.js";
-import { withConnection } from "../../../src/backend/hosts/ssh-connection-pool.js";
-import { execCommand } from "../../../src/backend/hosts/metrics-shared/common-utils.js";
-import { detectPlatform } from "../../../src/backend/hosts/metrics-shared/platform.js";
+} from "../../../../src/backend/hosts/ssh-client-factory.js";
+import { withConnection } from "../../../../src/backend/hosts/ssh-connection-pool.js";
+import { execCommand } from "../../../../src/backend/hosts/metrics-shared/common-utils.js";
+import { detectPlatform } from "../../../../src/backend/hosts/metrics-shared/platform.js";
 import {
   execElevated,
   ElevationError,
-} from "../../../src/backend/hosts/metrics-shared/exec-elevated.js";
-import { buildPackageActionCommand } from "../../../src/backend/hosts/metrics-shared/package-commands.js";
-import { isValidPackageName } from "../../../src/backend/hosts/metrics-shared/validation.js";
-import { resolveSnippetCommand } from "../../../src/backend/database/routes/snippets-execution.js";
+} from "../../../../src/backend/hosts/metrics-shared/exec-elevated.js";
+import { buildPackageActionCommand } from "../../../../src/backend/hosts/metrics-shared/package-commands.js";
+import { isValidPackageName } from "../../../../src/backend/hosts/metrics-shared/validation.js";
+import { resolveSnippetCommand } from "../../../../src/backend/database/routes/snippets-execution.js";
 import {
   registerFleetsRouter,
   unregisterFleetsRouter,
-} from "../../../src/backend/database/routes/fleet-dispatch.js";
+} from "../../../../src/backend/database/routes/fleet-dispatch.js";
 
 export const router = express.Router();
 
@@ -629,7 +629,7 @@ router.post(
       const expiresAt = expiryFromDuration(durationHours);
       const rbacAccessRepository = createCurrentRbacAccessRepository();
       const { SharedHostSecretsManager } =
-        await import("../../../src/backend/utils/shared-host-secrets-manager.js");
+        await import("../../../../src/backend/utils/shared-host-secrets-manager.js");
       const secretsManager = SharedHostSecretsManager.getInstance();
 
       const hostResults: Array<{
