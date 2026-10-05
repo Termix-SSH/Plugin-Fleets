@@ -3,7 +3,7 @@ import type {
   PanelProps,
   TabProps,
   TermixApp,
-} from "@termix/plugin-sdk/frontend";
+} from "@termix-ssh/plugin-sdk/frontend";
 import { FleetsPanel } from "./FleetsPanel.js";
 import { FleetInventoryTab } from "./FleetInventoryTab.js";
 import { createFleetsApi } from "./fleets-api.js";

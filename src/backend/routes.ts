@@ -5,7 +5,7 @@ import type { Client, SFTPWrapper } from "ssh2";
 import type {
   PluginContext,
   PluginHostShareLevel,
-} from "@termix/plugin-sdk/backend";
+} from "@termix-ssh/plugin-sdk/backend";
 import {
   execCommand,
   detectPlatform,
@@ -14,7 +14,7 @@ import {
   isValidPackageName,
   execElevated,
   ElevationError,
-} from "@termix/plugin-sdk/host-commands";
+} from "@termix-ssh/plugin-sdk/host-commands";
 import type { FleetRepository } from "./repository.js";
 
 const FLEET_TRANSFER_MAX_BYTES = 200 * 1024 * 1024;

@@ -5,7 +5,7 @@ import {
   useTranslation,
   useHosts,
   type PluginHostRecord,
-} from "@termix/plugin-sdk/frontend";
+} from "@termix-ssh/plugin-sdk/frontend";
 import {
   Button,
   Input,
@@ -20,7 +20,7 @@ import {
   DropdownMenuTrigger,
   InlineView,
   useConfirm,
-} from "@termix/plugin-sdk/ui";
+} from "@termix-ssh/plugin-sdk/ui";
 import { toast } from "sonner";
 import {
   Boxes,

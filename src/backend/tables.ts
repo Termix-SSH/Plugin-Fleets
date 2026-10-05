@@ -6,7 +6,7 @@ import {
   refHost,
   refUser,
   text,
-} from "@termix/plugin-sdk/db";
+} from "@termix-ssh/plugin-sdk/db";
 
 /**
  * A fleet: a named group of hosts, by static membership or tag rules.

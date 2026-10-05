@@ -1,5 +1,5 @@
 import type { Router } from "express";
-import type { PluginContext } from "@termix/plugin-sdk/backend";
+import type { PluginContext } from "@termix-ssh/plugin-sdk/backend";
 import { fleets, fleetMembers, fleetInventory } from "./tables.js";
 import { createFleetRepository } from "./repository.js";
 import { registerFleetRoutes } from "./routes.js";

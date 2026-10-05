@@ -1,9 +1,9 @@
 import { afterEach, describe, expect, it } from "vitest";
-import { createTestDb, type TestDb } from "@termix/plugin-sdk/testing";
+import { createTestDb, type TestDb } from "@termix-ssh/plugin-sdk/testing";
 import type {
   PluginHostSummary,
   PluginHosts,
-} from "@termix/plugin-sdk/backend";
+} from "@termix-ssh/plugin-sdk/backend";
 import { pluginDir } from "./helpers";
 import {
   fleets,

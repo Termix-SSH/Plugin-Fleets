@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { and, eq, inArray } from "drizzle-orm";
-import type { PluginDatabase, PluginHosts } from "@termix/plugin-sdk/backend";
+import type { PluginDatabase, PluginHosts } from "@termix-ssh/plugin-sdk/backend";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // The tables come from ctx.db.define, which the SDK hands back untyped, and
