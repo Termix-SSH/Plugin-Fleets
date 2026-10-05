@@ -12,18 +12,14 @@ import {
   Textarea,
   Checkbox,
   Badge,
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
   FOLDER_COLORS,
   Select2,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  InlineView,
+  useConfirm,
 } from "@termix/plugin-sdk/ui";
 import { toast } from "sonner";
 import {
@@ -45,7 +41,6 @@ import {
   Trash2,
   Upload,
   User,
-  X,
 } from "lucide-react";
 import type {
   FleetsApi,
@@ -193,82 +188,18 @@ function FleetFormDialog({
   }
 
   return (
-    <Dialog open={open} onOpenChange={(next) => !next && onClose()}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>
-            {fleet
-              ? t("newUi.sidebar.fleets.editFleetTitle")
-              : t("newUi.sidebar.fleets.createFleetTitle")}
-          </DialogTitle>
-          <DialogDescription>
-            {t("newUi.sidebar.fleets.createFleetDescription")}
-          </DialogDescription>
-        </DialogHeader>
-
-        <div className="flex flex-col gap-3">
-          <div className="flex flex-col gap-1.5">
-            <label className="text-xs text-muted-foreground">
-              {t("newUi.sidebar.fleets.nameLabel")}
-            </label>
-            <Input
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder={t("newUi.sidebar.fleets.namePlaceholder")}
-              autoFocus
-            />
-          </div>
-
-          <div className="flex flex-col gap-1.5">
-            <label className="text-xs text-muted-foreground">
-              {t("newUi.sidebar.fleets.descriptionLabel")}
-            </label>
-            <Textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder={t("newUi.sidebar.fleets.descriptionPlaceholder")}
-              rows={2}
-            />
-          </div>
-
-          <div className="flex flex-col gap-1.5">
-            <label className="text-xs text-muted-foreground">
-              {t("newUi.sidebar.fleets.colorLabel")}
-            </label>
-            <div className="flex gap-1.5">
-              {FOLDER_COLORS.map((c) => (
-                <button
-                  key={c}
-                  type="button"
-                  onClick={() => setColor(c)}
-                  className={`size-6 transition-all ${
-                    color === c
-                      ? "ring-2 ring-offset-2 ring-offset-background ring-white/50"
-                      : "opacity-75 hover:opacity-100"
-                  }`}
-                  style={{ backgroundColor: c }}
-                  aria-label={c}
-                />
-              ))}
-            </div>
-          </div>
-
-          <div className="flex flex-col gap-1.5">
-            <label className="text-xs text-muted-foreground">
-              {t("newUi.sidebar.fleets.tagRulesLabel")}
-            </label>
-            <Input
-              value={tagRulesText}
-              onChange={(e) => setTagRulesText(e.target.value)}
-              placeholder={t("newUi.sidebar.fleets.tagRulesPlaceholder")}
-            />
-            <span className="text-[11px] text-muted-foreground">
-              {t("newUi.sidebar.fleets.tagRulesHint")}
-            </span>
-          </div>
-        </div>
-
-        <DialogFooter>
+    <InlineView
+      open={open}
+      onOpenChange={(next) => !next && onClose()}
+      title={
+        <>
+          {fleet
+            ? t("newUi.sidebar.fleets.editFleetTitle")
+            : t("newUi.sidebar.fleets.createFleetTitle")}
+        </>
+      }
+      footer={
+        <div className="ml-auto flex flex-wrap items-center justify-end gap-2">
           <Button variant="outline" onClick={onClose}>
             {t("common.cancel")}
           </Button>
@@ -281,9 +212,74 @@ function FleetFormDialog({
             {saving && <Loader2 className="size-3.5 mr-2 animate-spin" />}
             {t("common.save")}
           </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </div>
+      }
+    >
+      <p className="text-xs text-muted-foreground">
+        {t("newUi.sidebar.fleets.createFleetDescription")}
+      </p>
+      <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-1.5">
+          <label className="text-xs text-muted-foreground">
+            {t("newUi.sidebar.fleets.nameLabel")}
+          </label>
+          <Input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder={t("newUi.sidebar.fleets.namePlaceholder")}
+            autoFocus
+          />
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <label className="text-xs text-muted-foreground">
+            {t("newUi.sidebar.fleets.descriptionLabel")}
+          </label>
+          <Textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder={t("newUi.sidebar.fleets.descriptionPlaceholder")}
+            rows={2}
+          />
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <label className="text-xs text-muted-foreground">
+            {t("newUi.sidebar.fleets.colorLabel")}
+          </label>
+          <div className="flex gap-1.5">
+            {FOLDER_COLORS.map((c) => (
+              <button
+                key={c}
+                type="button"
+                onClick={() => setColor(c)}
+                className={`size-6 transition-all ${
+                  color === c
+                    ? "ring-2 ring-offset-2 ring-offset-background ring-white/50"
+                    : "opacity-75 hover:opacity-100"
+                }`}
+                style={{ backgroundColor: c }}
+                aria-label={c}
+              />
+            ))}
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <label className="text-xs text-muted-foreground">
+            {t("newUi.sidebar.fleets.tagRulesLabel")}
+          </label>
+          <Input
+            value={tagRulesText}
+            onChange={(e) => setTagRulesText(e.target.value)}
+            placeholder={t("newUi.sidebar.fleets.tagRulesPlaceholder")}
+          />
+          <span className="text-[11px] text-muted-foreground">
+            {t("newUi.sidebar.fleets.tagRulesHint")}
+          </span>
+        </div>
+      </div>
+    </InlineView>
   );
 }
 
@@ -335,56 +331,12 @@ function MemberPickerDialog({
   }
 
   return (
-    <Dialog open={open} onOpenChange={(next) => !next && onClose()}>
-      <DialogContent className="sm:max-w-md flex flex-col max-h-[80dvh]">
-        <DialogHeader>
-          <DialogTitle>
-            {t("newUi.sidebar.fleets.manageMembersTitle")}
-          </DialogTitle>
-          <DialogDescription>
-            {t("newUi.sidebar.fleets.manageMembersDescription")}
-          </DialogDescription>
-        </DialogHeader>
-
-        <div className="relative shrink-0">
-          <Search className="size-3.5 absolute left-2 top-1/2 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            className="pl-7 h-8 text-xs"
-            placeholder={t("newUi.sidebar.fleets.searchHosts")}
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-        </div>
-
-        <div className="flex-1 min-h-0 overflow-y-auto flex flex-col gap-1">
-          {visibleHosts.map((host) => {
-            const hostId = Number(host.id);
-            const isMember = memberIds.has(hostId);
-            return (
-              <label
-                key={host.id}
-                className="flex items-center gap-2 text-xs cursor-pointer py-1"
-              >
-                <Checkbox
-                  checked={isMember}
-                  disabled={busyId === hostId}
-                  onCheckedChange={() => toggleHost(host, isMember)}
-                />
-                <span className="truncate flex-1">{host.name}</span>
-                <span className="text-muted-foreground text-[11px]">
-                  {host.ip}
-                </span>
-              </label>
-            );
-          })}
-          {visibleHosts.length === 0 && (
-            <div className="text-xs text-muted-foreground text-center py-4">
-              {t("newUi.sidebar.fleets.noHostsFound")}
-            </div>
-          )}
-        </div>
-
-        <DialogFooter>
+    <InlineView
+      open={open}
+      onOpenChange={(next) => !next && onClose()}
+      title={t("newUi.sidebar.fleets.manageMembersTitle")}
+      footer={
+        <div className="ml-auto flex flex-wrap items-center justify-end gap-2">
           <Button
             variant="outline"
             className="border-accent-brand/40 text-accent-brand hover:bg-accent-brand/10 hover:text-accent-brand"
@@ -392,9 +344,50 @@ function MemberPickerDialog({
           >
             {t("common.close")}
           </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </div>
+      }
+    >
+      <p className="text-xs text-muted-foreground">
+        {t("newUi.sidebar.fleets.manageMembersDescription")}
+      </p>
+      <div className="relative shrink-0">
+        <Search className="size-3.5 absolute left-2 top-1/2 -translate-y-1/2 text-muted-foreground" />
+        <Input
+          className="pl-7 h-8 text-xs"
+          placeholder={t("newUi.sidebar.fleets.searchHosts")}
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+      </div>
+
+      <div className="flex-1 min-h-0 overflow-y-auto flex flex-col gap-1">
+        {visibleHosts.map((host) => {
+          const hostId = Number(host.id);
+          const isMember = memberIds.has(hostId);
+          return (
+            <label
+              key={host.id}
+              className="flex items-center gap-2 text-xs cursor-pointer py-1"
+            >
+              <Checkbox
+                checked={isMember}
+                disabled={busyId === hostId}
+                onCheckedChange={() => toggleHost(host, isMember)}
+              />
+              <span className="truncate flex-1">{host.name}</span>
+              <span className="text-muted-foreground text-[11px]">
+                {host.ip}
+              </span>
+            </label>
+          );
+        })}
+        {visibleHosts.length === 0 && (
+          <div className="text-xs text-muted-foreground text-center py-4">
+            {t("newUi.sidebar.fleets.noHostsFound")}
+          </div>
+        )}
+      </div>
+    </InlineView>
   );
 }
 
@@ -523,234 +516,18 @@ function FleetShareDialog({
   }
 
   return (
-    <Dialog open={open} onOpenChange={(next) => !next && onClose()}>
-      <DialogContent className="sm:max-w-md flex flex-col max-h-[85dvh]">
-        <DialogHeader>
-          <DialogTitle>
-            {t("newUi.sidebar.fleets.shareFleetTitle", {
-              name: fleet?.name ?? "",
-            })}
-          </DialogTitle>
-          <DialogDescription>
-            {t("newUi.sidebar.fleets.shareFleetDescription")}
-          </DialogDescription>
-        </DialogHeader>
-
-        <div className="flex-1 min-h-0 overflow-y-auto flex flex-col gap-3">
-          {fleet && fleet.memberCount === 0 ? (
-            <div className="text-xs text-muted-foreground text-center py-6">
-              {t("newUi.sidebar.fleets.noMembersToShare")}
-            </div>
-          ) : (
-            <>
-              <div className="flex gap-1.5">
-                {(["user", "role"] as const).map((tab) => (
-                  <button
-                    key={tab}
-                    type="button"
-                    onClick={() => setTargetTab(tab)}
-                    className={`flex-1 flex items-center justify-center gap-1 px-2 py-1.5 text-[10px] font-bold uppercase tracking-widest border transition-colors ${targetTab === tab ? "border-accent-brand/40 bg-accent-brand/10 text-accent-brand" : "border-border text-muted-foreground hover:text-foreground"}`}
-                  >
-                    {tab === "user" ? (
-                      <User className="size-3 shrink-0" />
-                    ) : (
-                      <Shield className="size-3 shrink-0" />
-                    )}
-                    {tab === "user"
-                      ? t("hosts.sharing.usersTab")
-                      : t("hosts.sharing.rolesTab")}
-                    {tab === "user" && selectedUserIds.size > 0 && (
-                      <span>({selectedUserIds.size})</span>
-                    )}
-                    {tab === "role" && selectedRoleIds.size > 0 && (
-                      <span>({selectedRoleIds.size})</span>
-                    )}
-                  </button>
-                ))}
-              </div>
-
-              <div className="relative shrink-0">
-                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground/50" />
-                <Input
-                  placeholder={t("hosts.sharing.searchPlaceholder")}
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  className="pl-8"
-                />
-              </div>
-
-              <div className="flex flex-col border border-border h-28 overflow-y-auto shrink-0">
-                {targetTab === "user" &&
-                  (filteredUsers.length === 0 ? (
-                    <div className="px-3 py-4 text-xs text-muted-foreground/50 text-center">
-                      {t("hosts.sharing.noMatches")}
-                    </div>
-                  ) : (
-                    filteredUsers.map((user) => {
-                      const isSelected = selectedUserIds.has(user.id);
-                      return (
-                        <button
-                          key={user.id}
-                          type="button"
-                          onClick={() =>
-                            setSelectedUserIds((prev) => {
-                              const next = new Set(prev);
-                              if (next.has(user.id)) next.delete(user.id);
-                              else next.add(user.id);
-                              return next;
-                            })
-                          }
-                          className={`flex items-center gap-2 px-2.5 py-1.5 text-xs text-left border-b border-border/50 last:border-0 transition-colors shrink-0 ${isSelected ? "bg-accent-brand/10 text-accent-brand" : "hover:bg-muted/40"}`}
-                        >
-                          <div
-                            className={`size-3.5 border flex items-center justify-center shrink-0 transition-colors ${isSelected ? "border-accent-brand bg-accent-brand" : "border-border bg-background"}`}
-                          >
-                            {isSelected && (
-                              <Check className="size-2.5 text-background" />
-                            )}
-                          </div>
-                          <User className="size-3 text-muted-foreground shrink-0" />
-                          <span className="truncate">{user.username}</span>
-                        </button>
-                      );
-                    })
-                  ))}
-                {targetTab === "role" &&
-                  (filteredRoles.length === 0 ? (
-                    <div className="px-3 py-4 text-xs text-muted-foreground/50 text-center">
-                      {t("hosts.sharing.noMatches")}
-                    </div>
-                  ) : (
-                    filteredRoles.map((role) => {
-                      const isSelected = selectedRoleIds.has(role.id);
-                      return (
-                        <button
-                          key={role.id}
-                          type="button"
-                          onClick={() =>
-                            setSelectedRoleIds((prev) => {
-                              const next = new Set(prev);
-                              if (next.has(role.id)) next.delete(role.id);
-                              else next.add(role.id);
-                              return next;
-                            })
-                          }
-                          className={`flex items-center gap-2 px-2.5 py-1.5 text-xs text-left border-b border-border/50 last:border-0 transition-colors shrink-0 ${isSelected ? "bg-accent-brand/10 text-accent-brand" : "hover:bg-muted/40"}`}
-                        >
-                          <div
-                            className={`size-3.5 border flex items-center justify-center shrink-0 transition-colors ${isSelected ? "border-accent-brand bg-accent-brand" : "border-border bg-background"}`}
-                          >
-                            {isSelected && (
-                              <Check className="size-2.5 text-background" />
-                            )}
-                          </div>
-                          <Shield className="size-3 text-muted-foreground shrink-0" />
-                          <span className="truncate">
-                            {role.displayName || role.name}
-                          </span>
-                        </button>
-                      );
-                    })
-                  ))}
-              </div>
-
-              <div className="flex items-end gap-2 shrink-0">
-                <div className="flex flex-col gap-1 flex-1 min-w-0">
-                  <span className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
-                    {t("hosts.sharing.permissionLevelLabel")}
-                  </span>
-                  <Select2
-                    value={permissionLevel}
-                    onChange={(e) =>
-                      setPermissionLevel(e.target.value as SharePermissionLevel)
-                    }
-                    className="h-8 w-full px-2.5 text-xs border border-border bg-background hover:bg-muted/40 transition-colors"
-                  >
-                    {SHARE_PERMISSION_LEVELS.map((level) => (
-                      <option key={level} value={level}>
-                        {t(`hosts.sharing.levels.${level}.label`)}
-                      </option>
-                    ))}
-                  </Select2>
-                </div>
-
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <button
-                      type="button"
-                      className="flex flex-col gap-1 shrink-0"
-                    >
-                      <span className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground text-left">
-                        {t("hosts.sharing.expiryLabel")}
-                      </span>
-                      <span className="h-8 flex items-center justify-center px-2.5 text-xs border border-border hover:bg-muted/40 transition-colors whitespace-nowrap">
-                        {t(`hosts.sharing.expiry.${expiryPreset}`)}
-                      </span>
-                    </button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="text-xs">
-                    {SHARE_EXPIRY_PRESETS.map((preset) => (
-                      <DropdownMenuItem
-                        key={preset.key}
-                        onClick={() => setExpiryPreset(preset.key)}
-                      >
-                        {expiryPreset === preset.key ? (
-                          <Check className="size-3 mr-1.5" />
-                        ) : (
-                          <span className="size-3 mr-1.5" />
-                        )}
-                        {t(`hosts.sharing.expiry.${preset.key}`)}
-                      </DropdownMenuItem>
-                    ))}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-
-              <p className="text-[11px] text-muted-foreground leading-snug shrink-0">
-                {t(`hosts.sharing.levels.${permissionLevel}.description`)}
-              </p>
-
-              {expiryPreset === "custom" && (
-                <Input
-                  type="number"
-                  autoFocus
-                  placeholder={t("hosts.sharing.customHoursPlaceholder")}
-                  value={customHours}
-                  onChange={(e) => setCustomHours(e.target.value)}
-                  className="shrink-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                />
-              )}
-
-              {summary && (
-                <div className="flex flex-col gap-1 text-xs text-muted-foreground border-t border-border pt-2 shrink-0">
-                  <span>
-                    {t("newUi.sidebar.fleets.fleetSharedSuccessfully", {
-                      shared: summary.hostsShared,
-                      total: summary.hostsTotal,
-                    })}
-                  </span>
-                  {summary.hostResults.some((r) => !r.shared) && (
-                    <div className="flex flex-col gap-0.5">
-                      {summary.hostResults
-                        .filter((r) => !r.shared)
-                        .map((r) => (
-                          <span
-                            key={r.hostId}
-                            className="text-[10px] text-destructive"
-                          >
-                            {t("newUi.sidebar.fleets.resultFailed")}: #
-                            {r.hostId} ({r.reason ?? "unknown"})
-                          </span>
-                        ))}
-                    </div>
-                  )}
-                </div>
-              )}
-            </>
-          )}
-        </div>
-
-        <DialogFooter>
+    <InlineView
+      open={open}
+      onOpenChange={(next) => !next && onClose()}
+      title={
+        <>
+          {t("newUi.sidebar.fleets.shareFleetTitle", {
+            name: fleet?.name ?? "",
+          })}
+        </>
+      }
+      footer={
+        <div className="ml-auto flex flex-wrap items-center justify-end gap-2">
           <Button variant="outline" onClick={onClose}>
             {t("common.close")}
           </Button>
@@ -775,9 +552,226 @@ function FleetShareDialog({
                 : t("hosts.sharing.shareButton")}
             </Button>
           )}
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </div>
+      }
+    >
+      <p className="text-xs text-muted-foreground">
+        {t("newUi.sidebar.fleets.shareFleetDescription")}
+      </p>
+      <div className="flex-1 min-h-0 overflow-y-auto flex flex-col gap-3">
+        {fleet && fleet.memberCount === 0 ? (
+          <div className="text-xs text-muted-foreground text-center py-6">
+            {t("newUi.sidebar.fleets.noMembersToShare")}
+          </div>
+        ) : (
+          <>
+            <div className="flex gap-1.5">
+              {(["user", "role"] as const).map((tab) => (
+                <button
+                  key={tab}
+                  type="button"
+                  onClick={() => setTargetTab(tab)}
+                  className={`flex-1 flex items-center justify-center gap-1 px-2 py-1.5 text-[10px] font-bold uppercase tracking-widest border transition-colors ${targetTab === tab ? "border-accent-brand/40 bg-accent-brand/10 text-accent-brand" : "border-border text-muted-foreground hover:text-foreground"}`}
+                >
+                  {tab === "user" ? (
+                    <User className="size-3 shrink-0" />
+                  ) : (
+                    <Shield className="size-3 shrink-0" />
+                  )}
+                  {tab === "user"
+                    ? t("hosts.sharing.usersTab")
+                    : t("hosts.sharing.rolesTab")}
+                  {tab === "user" && selectedUserIds.size > 0 && (
+                    <span>({selectedUserIds.size})</span>
+                  )}
+                  {tab === "role" && selectedRoleIds.size > 0 && (
+                    <span>({selectedRoleIds.size})</span>
+                  )}
+                </button>
+              ))}
+            </div>
+
+            <div className="relative shrink-0">
+              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground/50" />
+              <Input
+                placeholder={t("hosts.sharing.searchPlaceholder")}
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="pl-8"
+              />
+            </div>
+
+            <div className="flex flex-col border border-border h-28 overflow-y-auto shrink-0">
+              {targetTab === "user" &&
+                (filteredUsers.length === 0 ? (
+                  <div className="px-3 py-4 text-xs text-muted-foreground/50 text-center">
+                    {t("hosts.sharing.noMatches")}
+                  </div>
+                ) : (
+                  filteredUsers.map((user) => {
+                    const isSelected = selectedUserIds.has(user.id);
+                    return (
+                      <button
+                        key={user.id}
+                        type="button"
+                        onClick={() =>
+                          setSelectedUserIds((prev) => {
+                            const next = new Set(prev);
+                            if (next.has(user.id)) next.delete(user.id);
+                            else next.add(user.id);
+                            return next;
+                          })
+                        }
+                        className={`flex items-center gap-2 px-2.5 py-1.5 text-xs text-left border-b border-border/50 last:border-0 transition-colors shrink-0 ${isSelected ? "bg-accent-brand/10 text-accent-brand" : "hover:bg-muted/40"}`}
+                      >
+                        <div
+                          className={`size-3.5 border flex items-center justify-center shrink-0 transition-colors ${isSelected ? "border-accent-brand bg-accent-brand" : "border-border bg-background"}`}
+                        >
+                          {isSelected && (
+                            <Check className="size-2.5 text-background" />
+                          )}
+                        </div>
+                        <User className="size-3 text-muted-foreground shrink-0" />
+                        <span className="truncate">{user.username}</span>
+                      </button>
+                    );
+                  })
+                ))}
+              {targetTab === "role" &&
+                (filteredRoles.length === 0 ? (
+                  <div className="px-3 py-4 text-xs text-muted-foreground/50 text-center">
+                    {t("hosts.sharing.noMatches")}
+                  </div>
+                ) : (
+                  filteredRoles.map((role) => {
+                    const isSelected = selectedRoleIds.has(role.id);
+                    return (
+                      <button
+                        key={role.id}
+                        type="button"
+                        onClick={() =>
+                          setSelectedRoleIds((prev) => {
+                            const next = new Set(prev);
+                            if (next.has(role.id)) next.delete(role.id);
+                            else next.add(role.id);
+                            return next;
+                          })
+                        }
+                        className={`flex items-center gap-2 px-2.5 py-1.5 text-xs text-left border-b border-border/50 last:border-0 transition-colors shrink-0 ${isSelected ? "bg-accent-brand/10 text-accent-brand" : "hover:bg-muted/40"}`}
+                      >
+                        <div
+                          className={`size-3.5 border flex items-center justify-center shrink-0 transition-colors ${isSelected ? "border-accent-brand bg-accent-brand" : "border-border bg-background"}`}
+                        >
+                          {isSelected && (
+                            <Check className="size-2.5 text-background" />
+                          )}
+                        </div>
+                        <Shield className="size-3 text-muted-foreground shrink-0" />
+                        <span className="truncate">
+                          {role.displayName || role.name}
+                        </span>
+                      </button>
+                    );
+                  })
+                ))}
+            </div>
+
+            <div className="flex items-end gap-2 shrink-0">
+              <div className="flex flex-col gap-1 flex-1 min-w-0">
+                <span className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+                  {t("hosts.sharing.permissionLevelLabel")}
+                </span>
+                <Select2
+                  value={permissionLevel}
+                  onChange={(e) =>
+                    setPermissionLevel(e.target.value as SharePermissionLevel)
+                  }
+                  className="h-8 w-full px-2.5 text-xs border border-border bg-background hover:bg-muted/40 transition-colors"
+                >
+                  {SHARE_PERMISSION_LEVELS.map((level) => (
+                    <option key={level} value={level}>
+                      {t(`hosts.sharing.levels.${level}.label`)}
+                    </option>
+                  ))}
+                </Select2>
+              </div>
+
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button
+                    type="button"
+                    className="flex flex-col gap-1 shrink-0"
+                  >
+                    <span className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground text-left">
+                      {t("hosts.sharing.expiryLabel")}
+                    </span>
+                    <span className="h-8 flex items-center justify-center px-2.5 text-xs border border-border hover:bg-muted/40 transition-colors whitespace-nowrap">
+                      {t(`hosts.sharing.expiry.${expiryPreset}`)}
+                    </span>
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="text-xs">
+                  {SHARE_EXPIRY_PRESETS.map((preset) => (
+                    <DropdownMenuItem
+                      key={preset.key}
+                      onClick={() => setExpiryPreset(preset.key)}
+                    >
+                      {expiryPreset === preset.key ? (
+                        <Check className="size-3 mr-1.5" />
+                      ) : (
+                        <span className="size-3 mr-1.5" />
+                      )}
+                      {t(`hosts.sharing.expiry.${preset.key}`)}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+
+            <p className="text-[11px] text-muted-foreground leading-snug shrink-0">
+              {t(`hosts.sharing.levels.${permissionLevel}.description`)}
+            </p>
+
+            {expiryPreset === "custom" && (
+              <Input
+                type="number"
+                autoFocus
+                placeholder={t("hosts.sharing.customHoursPlaceholder")}
+                value={customHours}
+                onChange={(e) => setCustomHours(e.target.value)}
+                className="shrink-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              />
+            )}
+
+            {summary && (
+              <div className="flex flex-col gap-1 text-xs text-muted-foreground border-t border-border pt-2 shrink-0">
+                <span>
+                  {t("newUi.sidebar.fleets.fleetSharedSuccessfully", {
+                    shared: summary.hostsShared,
+                    total: summary.hostsTotal,
+                  })}
+                </span>
+                {summary.hostResults.some((r) => !r.shared) && (
+                  <div className="flex flex-col gap-0.5">
+                    {summary.hostResults
+                      .filter((r) => !r.shared)
+                      .map((r) => (
+                        <span
+                          key={r.hostId}
+                          className="text-[10px] text-destructive"
+                        >
+                          {t("newUi.sidebar.fleets.resultFailed")}: #{r.hostId}{" "}
+                          ({r.reason ?? "unknown"})
+                        </span>
+                      ))}
+                  </div>
+                )}
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    </InlineView>
   );
 }
 
@@ -1410,7 +1404,7 @@ export function FleetsPanel({
   const [selectedFleet, setSelectedFleet] = useState<FleetRow | null>(null);
   const [formOpen, setFormOpen] = useState(false);
   const [editingFleet, setEditingFleet] = useState<FleetRow | null>(null);
-  const [deleteTarget, setDeleteTarget] = useState<FleetRow | null>(null);
+  const confirm = useConfirm();
   const [shareTarget, setShareTarget] = useState<FleetRow | null>(null);
   const hasLoadedRef = useRef(false);
 
@@ -1439,13 +1433,19 @@ export function FleetsPanel({
       .finally(() => setLoading(false));
   }, [active, hasLoadedRef, loadFleets, t]);
 
-  async function handleDelete() {
-    if (!deleteTarget) return;
+  async function handleDelete(fleet: FleetRow) {
+    const ok = await confirm({
+      title: t("newUi.sidebar.fleets.deleteFleetTitle"),
+      description: t("newUi.sidebar.fleets.deleteFleetDescription", {
+        name: fleet.name,
+      }),
+      confirmLabel: t("common.delete"),
+    });
+    if (!ok) return;
     try {
-      await api.remove(deleteTarget.id);
+      await api.remove(fleet.id);
       toast.success(t("newUi.sidebar.fleets.fleetDeleted"));
-      if (selectedFleet?.id === deleteTarget.id) setSelectedFleet(null);
-      setDeleteTarget(null);
+      if (selectedFleet?.id === fleet.id) setSelectedFleet(null);
       loadFleets();
     } catch (error) {
       const message = getErrorMessage(error, "");
@@ -1578,7 +1578,7 @@ export function FleetsPanel({
                   className="shrink-0 opacity-0 group-hover:opacity-100 hover:text-destructive"
                   onClick={(e) => {
                     e.stopPropagation();
-                    setDeleteTarget(fleet);
+                    void handleDelete(fleet);
                   }}
                 >
                   <Trash2 className="size-3.5" />
@@ -1603,33 +1603,6 @@ export function FleetsPanel({
         onClose={() => setShareTarget(null)}
         fleet={shareTarget}
       />
-
-      <Dialog
-        open={!!deleteTarget}
-        onOpenChange={(next) => !next && setDeleteTarget(null)}
-      >
-        <DialogContent className="sm:max-w-sm">
-          <DialogHeader>
-            <DialogTitle>
-              {t("newUi.sidebar.fleets.deleteFleetTitle")}
-            </DialogTitle>
-            <DialogDescription>
-              {t("newUi.sidebar.fleets.deleteFleetDescription", {
-                name: deleteTarget?.name,
-              })}
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setDeleteTarget(null)}>
-              {t("common.cancel")}
-            </Button>
-            <Button variant="destructive" onClick={handleDelete}>
-              <X className="size-3.5 mr-2" />
-              {t("common.delete")}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }

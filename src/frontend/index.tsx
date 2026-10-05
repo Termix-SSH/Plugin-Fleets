@@ -40,6 +40,7 @@ export function activate(app: TermixApp): void {
     id: "fleets",
     icon: Boxes,
     titleKey: "nav.fleets",
+    group: "objects",
     after: "macros",
     order: 10,
   });
