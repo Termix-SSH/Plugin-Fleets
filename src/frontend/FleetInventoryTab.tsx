@@ -1,7 +1,14 @@
 import { getErrorMessage, cn } from "./helpers.js";
 import { useEffect, useMemo, useState, useCallback } from "react";
 import { useTranslation } from "@termix-ssh/plugin-sdk/frontend";
-import { Input, Button } from "@termix-ssh/plugin-sdk/ui";
+import {
+  Button,
+  EmptyState,
+  Facts,
+  PanelSearch,
+  PanelShell,
+  Select2,
+} from "@termix-ssh/plugin-sdk/ui";
 import { toast } from "sonner";
 import {
   ArrowDown,
@@ -9,7 +16,6 @@ import {
   ArrowUpDown,
   Loader2,
   RefreshCw,
-  Search,
   Server,
 } from "lucide-react";
 import type { FleetsApi, FleetRow, FleetInventoryEntry } from "./fleets-api.js";
@@ -236,27 +242,12 @@ export function FleetInventoryTab({
   const collectedCount = entries.filter((e) => e.inventory !== null).length;
 
   return (
-    <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
-      <div className="flex shrink-0 flex-wrap items-center gap-2 border-b border-border px-3 py-2.5">
-        <Server className="size-4 text-muted-foreground" />
-        <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-          {t("newUi.sidebar.fleets.tabInventory")}
-        </span>
-
-        <select
-          className="px-2 py-1 text-[10px] bg-background border border-border text-foreground outline-none"
-          value={selectedFleetId ?? ""}
-          onChange={(e) => setSelectedFleetId(Number(e.target.value))}
-        >
-          {fleets.map((fleet) => (
-            <option key={fleet.id} value={fleet.id}>
-              {fleet.name}
-            </option>
-          ))}
-        </select>
-
-        {selectedFleet && (
-          <span className="flex gap-3 text-[11px] text-muted-foreground">
+    <PanelShell
+      icon={<Server className="size-4" />}
+      title={t("newUi.sidebar.fleets.tabInventory")}
+      status={
+        selectedFleet ? (
+          <Facts>
             <span>
               {t("newUi.sidebar.fleets.memberCount", {
                 count: entries.length,
@@ -268,150 +259,157 @@ export function FleetInventoryTab({
                 total: entries.length,
               })}
             </span>
-          </span>
-        )}
-
-        <div className="ml-auto flex items-center gap-1.5">
-          <div className="relative">
-            <Search className="pointer-events-none absolute left-2 top-1/2 size-3 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder={t("newUi.sidebar.fleets.searchHosts")}
-              className="h-7 w-48 pl-6 text-xs"
-            />
-          </div>
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={handleRefresh}
-            disabled={refreshing || selectedFleetId === undefined}
+          </Facts>
+        ) : undefined
+      }
+      actions={
+        <Button
+          variant="ghost"
+          size="icon-sm"
+          className="text-accent-brand hover:text-accent-brand"
+          onClick={handleRefresh}
+          disabled={refreshing || selectedFleetId === undefined}
+          title={t("newUi.sidebar.fleets.refreshInventory")}
+          aria-label={t("newUi.sidebar.fleets.refreshInventory")}
+        >
+          {refreshing ? (
+            <Loader2 className="size-4 animate-spin" />
+          ) : (
+            <RefreshCw className="size-4" />
+          )}
+        </Button>
+      }
+      toolbar={
+        <>
+          <Select2
+            value={selectedFleetId === undefined ? "" : String(selectedFleetId)}
+            onChange={(e) => setSelectedFleetId(Number(e.target.value))}
+            className="h-8 w-48 shrink-0 text-xs"
           >
-            {refreshing ? (
-              <Loader2 className="size-3.5 mr-1.5 animate-spin" />
-            ) : (
-              <RefreshCw className="size-3.5 mr-1.5" />
-            )}
-            {t("newUi.sidebar.fleets.refreshInventory")}
-          </Button>
+            {fleets.map((fleet) => (
+              <option key={fleet.id} value={String(fleet.id)}>
+                {fleet.name}
+              </option>
+            ))}
+          </Select2>
+          <PanelSearch
+            value={search}
+            onChange={setSearch}
+            placeholder={t("newUi.sidebar.fleets.searchHosts")}
+            fill
+          />
+        </>
+      }
+    >
+      {loading ? (
+        <div className="flex h-full items-center justify-center py-16 text-muted-foreground">
+          <Loader2 className="size-5 animate-spin" />
         </div>
-      </div>
-
-      <div className="min-h-0 flex-1 overflow-y-auto thin-scrollbar">
-        {loading ? (
-          <div className="flex h-full items-center justify-center py-16 text-muted-foreground">
-            <Loader2 className="size-5 animate-spin" />
-          </div>
-        ) : fleets.length === 0 ? (
-          <div className="flex h-full items-center justify-center py-16 text-xs text-muted-foreground">
-            {t("newUi.sidebar.fleets.noFleets")}
-          </div>
-        ) : filteredSorted.length === 0 ? (
-          <div className="flex h-full items-center justify-center py-16 text-xs text-muted-foreground">
-            {t("newUi.sidebar.fleets.noMembers")}
-          </div>
-        ) : (
-          <table className="w-full border-collapse text-xs">
-            <thead className="sticky top-0 z-10 bg-card">
-              <tr className="border-b border-border text-[10px] uppercase tracking-wider text-muted-foreground">
-                <SortHeader
-                  label={t("newUi.sidebar.fleets.inventoryHost")}
-                  column="hostName"
-                  sortKey={sortKey}
-                  sortDirection={sortDirection}
-                  onSort={handleSort}
-                />
-                <SortHeader
-                  label={t("newUi.sidebar.fleets.inventoryOs")}
-                  column="osPrettyName"
-                  sortKey={sortKey}
-                  sortDirection={sortDirection}
-                  onSort={handleSort}
-                />
-                <SortHeader
-                  label={t("newUi.sidebar.fleets.inventoryKernel")}
-                  column="kernel"
-                  sortKey={sortKey}
-                  sortDirection={sortDirection}
-                  onSort={handleSort}
-                />
-                <SortHeader
-                  label={t("newUi.sidebar.fleets.inventoryArch")}
-                  column="architecture"
-                  sortKey={sortKey}
-                  sortDirection={sortDirection}
-                  onSort={handleSort}
-                />
-                <SortHeader
-                  label={t("newUi.sidebar.fleets.inventoryUptime")}
-                  column="uptimeSeconds"
-                  sortKey={sortKey}
-                  sortDirection={sortDirection}
-                  onSort={handleSort}
-                />
-                <SortHeader
-                  label={t("newUi.sidebar.fleets.inventoryPackageManager")}
-                  column="packageManager"
-                  sortKey={sortKey}
-                  sortDirection={sortDirection}
-                  onSort={handleSort}
-                />
-                <SortHeader
-                  label={t("newUi.sidebar.fleets.inventoryCollectedAt")}
-                  column="collectedAt"
-                  sortKey={sortKey}
-                  sortDirection={sortDirection}
-                  onSort={handleSort}
-                />
+      ) : fleets.length === 0 ? (
+        <EmptyState icon={Server} title={t("newUi.sidebar.fleets.noFleets")} />
+      ) : filteredSorted.length === 0 ? (
+        <EmptyState icon={Server} title={t("newUi.sidebar.fleets.noMembers")} />
+      ) : (
+        <table className="w-full border-collapse text-xs">
+          <thead className="sticky top-0 z-10 bg-background">
+            <tr className="border-b border-border text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/70">
+              <SortHeader
+                label={t("newUi.sidebar.fleets.inventoryHost")}
+                column="hostName"
+                sortKey={sortKey}
+                sortDirection={sortDirection}
+                onSort={handleSort}
+              />
+              <SortHeader
+                label={t("newUi.sidebar.fleets.inventoryOs")}
+                column="osPrettyName"
+                sortKey={sortKey}
+                sortDirection={sortDirection}
+                onSort={handleSort}
+              />
+              <SortHeader
+                label={t("newUi.sidebar.fleets.inventoryKernel")}
+                column="kernel"
+                sortKey={sortKey}
+                sortDirection={sortDirection}
+                onSort={handleSort}
+              />
+              <SortHeader
+                label={t("newUi.sidebar.fleets.inventoryArch")}
+                column="architecture"
+                sortKey={sortKey}
+                sortDirection={sortDirection}
+                onSort={handleSort}
+              />
+              <SortHeader
+                label={t("newUi.sidebar.fleets.inventoryUptime")}
+                column="uptimeSeconds"
+                sortKey={sortKey}
+                sortDirection={sortDirection}
+                onSort={handleSort}
+              />
+              <SortHeader
+                label={t("newUi.sidebar.fleets.inventoryPackageManager")}
+                column="packageManager"
+                sortKey={sortKey}
+                sortDirection={sortDirection}
+                onSort={handleSort}
+              />
+              <SortHeader
+                label={t("newUi.sidebar.fleets.inventoryCollectedAt")}
+                column="collectedAt"
+                sortKey={sortKey}
+                sortDirection={sortDirection}
+                onSort={handleSort}
+              />
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-border">
+            {filteredSorted.map((entry) => (
+              <tr
+                key={entry.hostId}
+                className="transition-colors hover:bg-muted/40"
+              >
+                <td className="px-3 py-2">
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={cn(
+                        "size-1.5 shrink-0",
+                        entry.inventory
+                          ? "bg-green-500"
+                          : "bg-muted-foreground/50",
+                      )}
+                    />
+                    <span className="min-w-0 truncate font-semibold">
+                      {entry.hostName}
+                    </span>
+                  </div>
+                </td>
+                <td className="px-3 py-2 text-muted-foreground">
+                  {entry.inventory?.osPrettyName ?? "-"}
+                </td>
+                <td className="px-3 py-2 font-mono text-muted-foreground">
+                  {entry.inventory?.kernel ?? "-"}
+                </td>
+                <td className="px-3 py-2 text-muted-foreground">
+                  {entry.inventory?.architecture ?? "-"}
+                </td>
+                <td className="px-3 py-2 whitespace-nowrap text-muted-foreground">
+                  {formatUptime(entry.inventory?.uptimeSeconds ?? null)}
+                </td>
+                <td className="px-3 py-2 text-muted-foreground">
+                  {entry.inventory?.packageManager ?? "-"}
+                </td>
+                <td className="px-3 py-2 whitespace-nowrap text-muted-foreground">
+                  {entry.inventory?.collectedAt
+                    ? new Date(entry.inventory.collectedAt).toLocaleString()
+                    : "-"}
+                </td>
               </tr>
-            </thead>
-            <tbody className="divide-y divide-border">
-              {filteredSorted.map((entry) => (
-                <tr
-                  key={entry.hostId}
-                  className="transition-colors hover:bg-muted/40"
-                >
-                  <td className="px-3 py-2">
-                    <div className="flex items-center gap-2">
-                      <span
-                        className={cn(
-                          "size-1.5 shrink-0",
-                          entry.inventory
-                            ? "bg-green-500"
-                            : "bg-muted-foreground/50",
-                        )}
-                      />
-                      <span className="min-w-0 truncate font-semibold">
-                        {entry.hostName}
-                      </span>
-                    </div>
-                  </td>
-                  <td className="px-3 py-2 text-muted-foreground">
-                    {entry.inventory?.osPrettyName ?? "-"}
-                  </td>
-                  <td className="px-3 py-2 font-mono text-muted-foreground">
-                    {entry.inventory?.kernel ?? "-"}
-                  </td>
-                  <td className="px-3 py-2 text-muted-foreground">
-                    {entry.inventory?.architecture ?? "-"}
-                  </td>
-                  <td className="px-3 py-2 whitespace-nowrap text-muted-foreground">
-                    {formatUptime(entry.inventory?.uptimeSeconds ?? null)}
-                  </td>
-                  <td className="px-3 py-2 text-muted-foreground">
-                    {entry.inventory?.packageManager ?? "-"}
-                  </td>
-                  <td className="px-3 py-2 whitespace-nowrap text-muted-foreground">
-                    {entry.inventory?.collectedAt
-                      ? new Date(entry.inventory.collectedAt).toLocaleString()
-                      : "-"}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
-    </div>
+            ))}
+          </tbody>
+        </table>
+      )}
+    </PanelShell>
   );
 }
