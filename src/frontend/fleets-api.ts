@@ -49,7 +49,7 @@ export interface FleetHostResult {
   error?: string;
 }
 
-export interface FleetInventoryRecord {
+interface FleetInventoryRecord {
   id: number;
   hostId: number;
   userId: string;
