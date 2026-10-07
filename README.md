@@ -27,14 +27,6 @@ Fleets groups your hosts so you can act on all of them together.
 
 <br />
 
-## Services
-
-Provides to other plugins:
-
-- `fleets.access`: list fleets and run actions on them
-
-<br />
-
 ## Sponsors
 
 Interested in a paid placement to support development? Email [mail@termix.site](mailto:mail@termix.site).

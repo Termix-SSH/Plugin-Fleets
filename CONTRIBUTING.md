@@ -15,3 +15,9 @@ npm run format     # format the code with Prettier
 - `fleets.view`: see fleets, their hosts and their inventory. Admins and users have it by default.
 - `fleets.manage`: create, edit, delete and share fleets. Admins and users have it by default.
 - `fleets.execute`: run commands, package actions and file transfers on a fleet. Admins and users have it by default.
+
+## Services
+
+Provides to other plugins:
+
+- `fleets.access`: list fleets and run actions on them
