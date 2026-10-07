@@ -16,12 +16,6 @@ Fleets groups your hosts so you can act on all of them together.
 
 <br />
 
-## Install
-
-Fleets ships with [Termix](https://github.com/Termix-SSH/Termix). Admins can turn it on or off, update it or install it again from the Plugins tab. Want to see it first? Try the [demo](https://demo.termix.site/), any username and password works.
-
-<br />
-
 ## Features
 
 - Group hosts by hand or with tag rules, so new hosts join on their own
