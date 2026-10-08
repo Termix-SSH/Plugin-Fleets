@@ -62,6 +62,7 @@ import type {
   SharePermissionLevel,
   ShareTarget,
 } from "./fleets-api.js";
+import { docsUrl } from "./docs";
 
 const SHARE_PERMISSION_LEVELS: SharePermissionLevel[] = [
   "connect",
@@ -1442,7 +1443,7 @@ export function FleetsPanel({
         />
         <Button variant="outline" size="icon" asChild>
           <a
-            href="https://docs.termix.site/features/fleets/overview"
+            href={docsUrl()}
             target="_blank"
             rel="noreferrer"
             title={t("hosts.docsLink")}

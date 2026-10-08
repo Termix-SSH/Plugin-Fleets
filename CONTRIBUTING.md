@@ -10,14 +10,6 @@ npm run validate   # check manifest.json
 npm run format     # format the code with Prettier
 ```
 
-## Permissions
+## Docs
 
-- `fleets.view`: see fleets, their hosts and their inventory. Admins and users have it by default.
-- `fleets.manage`: create, edit, delete and share fleets. Admins and users have it by default.
-- `fleets.execute`: run commands, package actions and file transfers on a fleet. Admins and users have it by default.
-
-## Services
-
-Provides to other plugins:
-
-- `fleets.access`: list fleets and run actions on them
+The docs for this plugin are in [docs/](docs/) and are published at https://docs.termix.site/plugins/fleets. Settings, permissions, services, environment variables and the API reference are made from `manifest.json` and the `@openapi` comments in the code, so keep those up to date instead of writing them by hand. See [writing docs](https://docs.termix.site/develop/docs).

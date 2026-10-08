@@ -14,6 +14,8 @@
 
 Fleets groups your hosts so you can act on all of them together.
 
+Read the [docs](https://docs.termix.site/plugins/fleets) to set it up and use it.
+
 <br />
 
 ## Features
