@@ -1,6 +1,11 @@
+import fs from "node:fs";
+import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import { createTestDb, type TestDb } from "@termix-ssh/plugin-sdk/testing";
+import { LEGACY_TABLE_OWNERS } from "@termix-ssh/plugin-sdk/db";
+import { findUnownedTableWrites } from "@termix-ssh/plugin-sdk/ddl";
 import { pluginDir } from "./helpers";
+import { tables } from "../../src/backend/tables";
 
 // fleets/fleet_members/fleet_inventory as core's SQLite bootstrap created
 // them before 2.9.0, plus the indexes performance-indexes.ts added.
@@ -90,7 +95,7 @@ describe("adopting fleets, fleet_members, fleet_inventory", () => {
       },
     });
 
-    expect(db.applied).toEqual(["0001_adopt_fleets"]);
+    expect(db.applied).toEqual(["0001_adopt_fleets", "0002_mysql_indexes"]);
     expect(tableExists("fleets")).toBe(false);
     expect(tableExists("fleet_members")).toBe(false);
     expect(tableExists("fleet_inventory")).toBe(false);
@@ -187,5 +192,36 @@ describe("adopting fleets, fleet_members, fleet_inventory", () => {
       }[]
     ).map((row) => row.name);
     expect(names).toEqual(["Theirs"]);
+  });
+});
+
+describe("mysql migrations", () => {
+  const mysqlDir = path.join(pluginDir, "migrations", "mysql");
+  const mysqlSql = () =>
+    fs
+      .readdirSync(mysqlDir)
+      .filter((file) => file.endsWith(".sql"))
+      .sort()
+      .map((file) => fs.readFileSync(path.join(mysqlDir, file), "utf8"));
+
+  it("create every index tables.ts declares", () => {
+    const all = mysqlSql().join("\n");
+    for (const table of tables) {
+      for (const index of table.indexes) {
+        const unique = index.unique ? "UNIQUE " : "";
+        expect(all).toContain(`CREATE ${unique}INDEX \`${index.name}\``);
+      }
+    }
+  });
+
+  it("only write tables this plugin owns", () => {
+    const legacy = new Set(
+      Object.entries(LEGACY_TABLE_OWNERS)
+        .filter(([, owner]) => owner === "fleets")
+        .map(([table]) => table),
+    );
+    for (const sql of mysqlSql()) {
+      expect(findUnownedTableWrites("fleets", sql, legacy)).toEqual([]);
+    }
   });
 });
