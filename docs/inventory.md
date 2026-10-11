@@ -7,7 +7,7 @@ Inventory answers a simple question: what is actually running on these machines?
 
 ## Collecting inventory
 
-Open a fleet, go to the **Inventory** tab, and press refresh. Termix connects to each host, reads a few facts, and stores them.
+Open a fleet, go to the Inventory tab, and press refresh. Termix connects to each host, reads a few facts, and stores them.
 
 For each host it records:
 

@@ -4,13 +4,13 @@ Fleets are useful for anything you manage as a set: all your web servers, everyt
 
 ## Creating a fleet
 
-Open **Fleets** from the sidebar and press **Create Fleet**. A fleet needs a name. You can also give it a description, a color, and tag rules.
+Open Fleets from the sidebar and press Create Fleet. A fleet needs a name. You can also give it a description, a color, and tag rules.
 
 ## How membership works
 
 A fleet gets its hosts from two places, and it adds them together:
 
-- Hosts you add by hand. Open the fleet, press **Manage Members**, and tick the hosts you want.
+- Hosts you add by hand. Open the fleet, press Manage Members, and tick the hosts you want.
 - Tag rules. Give the fleet a list of tags. Any host carrying one of those tags joins automatically.
 
 Tag rules are the reason fleets stay useful over time. If your fleet matches the tag `web`, then every new host you tag `web` joins on its own. You never have to remember to add it.
@@ -23,7 +23,7 @@ Removing a host from a fleet only takes it off the hand-picked list. If it still
 
 ## Running a command on every host
 
-Open a fleet and pick **Run command**. Type the command once and Termix runs it on every host in the fleet at the same time.
+Open a fleet and pick Run command. Type the command once and Termix runs it on every host in the fleet at the same time.
 
 You get a result for each host separately, so you can see exactly which ones worked and which did not. One host failing does not stop the rest. Termix works on up to 10 hosts at a time.
 
