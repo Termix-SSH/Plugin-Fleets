@@ -44,14 +44,20 @@
     }
   ],
   "locales": "locales",
-  "platforms": ["linux", "win32", "darwin"],
+  "platforms": [
+    "linux",
+    "win32",
+    "darwin"
+  ],
   "contributes": {
     "tabs": [
       {
         "id": "fleet-inventory",
         "titleKey": "nav.fleets",
         "icon": "Boxes",
-        "openFrom": ["rail"]
+        "openFrom": [
+          "rail"
+        ]
       }
     ],
     "panels": [
@@ -66,22 +72,30 @@
         "name": "view",
         "titleKey": "permissions.view.title",
         "descriptionKey": "permissions.view.description",
-        "defaultRoles": ["user"]
+        "defaultRoles": [
+          "user"
+        ]
       },
       {
         "name": "manage",
         "titleKey": "permissions.manage.title",
         "descriptionKey": "permissions.manage.description",
-        "defaultRoles": ["user"]
+        "defaultRoles": [
+          "user"
+        ]
       },
       {
         "name": "execute",
         "titleKey": "permissions.execute.title",
         "descriptionKey": "permissions.execute.description",
-        "defaultRoles": ["user"]
+        "defaultRoles": [
+          "user"
+        ]
       }
     ],
-    "uses": ["snippets.extractInputs"],
+    "uses": [
+      "snippets.extractInputs"
+    ],
     "settings": {
       "user": [
         {
