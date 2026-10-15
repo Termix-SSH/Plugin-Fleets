@@ -6,6 +6,12 @@
 
 <p>Group hosts into fleets and run commands, package actions and file transfers on all of them at once</p>
 
+<!-- VIDEO:START -->
+
+<a href="https://www.youtube.com/watch?v=WnQLS1N6oIA"><img src="https://img.shields.io/badge/Watch_the_demo-f59145?style=for-the-badge&logo=youtube&logoColor=white" alt="Watch the demo on YouTube" /></a>
+
+<!-- VIDEO:END -->
+
 </div>
 
 <br />
