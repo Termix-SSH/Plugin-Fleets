@@ -82,7 +82,7 @@
         "defaultRoles": ["user"]
       }
     ],
-    "uses": ["snippets.extractInputs"],
+    "uses": ["snippets.extractInputs", "snippets.list"],
     "settings": {
       "user": [
         {

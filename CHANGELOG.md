@@ -2,6 +2,10 @@
 
 ## 1.0.2
 
+### Added
+
+- Pick a snippet in a fleet's Run command tab to run it on every host in the fleet
+
 ### Changed
 
 - The plugin name and description show in your language
