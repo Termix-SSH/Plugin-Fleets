@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
-const invokeAction = vi.fn(async (id: string) => {
+const invokeAction = vi.fn(async (id: string, ..._args: unknown[]) => {
   if (id === "snippets.list") {
     return [
       { id: 1, name: "Disk", content: "df -h", isNote: false },
