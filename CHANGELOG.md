@@ -10,6 +10,7 @@
 
 - Needs Termix 26.11.1 or newer
 - Settings and the inventory use the Termix tile look
+- Form labels match the rest of Termix
 
 ## 1.1.0
 
