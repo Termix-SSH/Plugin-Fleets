@@ -32,6 +32,8 @@ Read the [docs](https://docs.termix.site/plugins/fleets) to set it up and use it
 - Push and pull files on every host
 - Collect an inventory of OS, kernel, architecture and uptime
 - Share a fleet with users or roles
+- Run a command as a rollout from Operations Center or Automations, with a result per host
+- A dashboard card with each fleet and its host count
 
 <br />
 
