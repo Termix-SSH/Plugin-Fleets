@@ -3,6 +3,8 @@ import type { PluginContext } from "@termix-ssh/plugin-sdk/backend";
 import { fleets, fleetMembers, fleetInventory } from "./tables.js";
 import { createFleetRepository } from "./repository.js";
 import { registerFleetRoutes } from "./routes.js";
+import { registerOperations } from "./operations.js";
+import { registerFleetSync } from "./sync.js";
 
 /** What other plugins get from ctx.services.get("fleets.access", {userId}). */
 export interface FleetsService {
@@ -37,6 +39,8 @@ export async function activate(ctx: PluginContext) {
   );
 
   registerFleetRoutes(ctx.http.router<Router>(), repo, ctx);
+  registerFleetSync(ctx, fleetsTable, repo);
+  registerOperations(ctx, repo);
 
   // The service is gated on fleets.view; changing a fleet also needs
   // fleets.manage, as its routes do.

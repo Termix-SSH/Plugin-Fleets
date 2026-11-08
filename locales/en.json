@@ -166,5 +166,21 @@
   "plugin": {
     "name": "Fleets",
     "description": "Group hosts into fleets and run commands, package actions and file transfers on all of them at once."
+  },
+  "operations": {
+    "runCommand": {
+      "title": "Run a command",
+      "description": "Runs one shell command on the host as the login user.",
+      "command": "Command"
+    },
+    "listFleets": {
+      "title": "List fleets"
+    }
+  },
+  "card": {
+    "loading": "Loading",
+    "empty": "No fleets yet. Open Fleets to make one.",
+    "hosts_one": "{{count}} host",
+    "hosts_other": "{{count}} hosts"
   }
 }

@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it } from "vitest";
+import { screen } from "@testing-library/react";
 import {
   renderWithApp,
   type RenderedPluginApp,
@@ -49,5 +50,22 @@ describe(`${manifest.id} activate`, () => {
     expect(app.registered.dashboardCards()).toEqual([]);
     expect(app.registered.settingsComponents()).toEqual([]);
     expect(app.registered.actions()).toEqual([]);
+  });
+});
+
+describe("fleets dashboard card", () => {
+  it("lists fleets with their host counts", async () => {
+    const list = [{ id: 3, name: "Web fleet", memberCount: 2 }];
+    const app = await renderWithApp(plugin, {
+      manifest,
+      locales,
+      permissions: ["fleets.view"],
+      api: { get: async () => ({ data: list }) } as never,
+    });
+    expect(app.registered.dashboardCards()).toEqual(["fleets"]);
+    app.renderDashboardCard("fleets");
+    expect(await screen.findByText("Web fleet")).toBeTruthy();
+    expect(screen.getByText("2 hosts")).toBeTruthy();
+    await app.deactivate();
   });
 });

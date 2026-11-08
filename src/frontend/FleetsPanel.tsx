@@ -31,6 +31,8 @@ import {
   FormFooter,
   TabStrip,
   Segmented,
+  LoadingState,
+  TOOLBAR_FIT,
 } from "@termix-ssh/plugin-sdk/ui";
 import { toast } from "sonner";
 import {
@@ -225,7 +227,7 @@ function FleetFormDialog({
       </p>
       <div className="flex flex-col gap-3">
         <div className="flex flex-col gap-1.5">
-          <label className="text-xs text-muted-foreground">
+          <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
             {t("newUi.sidebar.fleets.nameLabel")}
           </label>
           <Input
@@ -237,7 +239,7 @@ function FleetFormDialog({
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <label className="text-xs text-muted-foreground">
+          <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
             {t("newUi.sidebar.fleets.descriptionLabel")}
           </label>
           <Textarea
@@ -249,7 +251,7 @@ function FleetFormDialog({
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <label className="text-xs text-muted-foreground">
+          <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
             {t("newUi.sidebar.fleets.colorLabel")}
           </label>
           <div className="flex gap-1.5">
@@ -271,7 +273,7 @@ function FleetFormDialog({
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <label className="text-xs text-muted-foreground">
+          <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
             {t("newUi.sidebar.fleets.tagRulesLabel")}
           </label>
           <Input
@@ -966,7 +968,7 @@ function TransferTab({ api, fleetId }: { api: FleetsApi; fleetId: number }) {
       <Segmented<"push" | "pull">
         value={direction}
         onChange={setDirection}
-        className="w-full [&>button]:flex-1"
+
         options={[
           {
             value: "push",
@@ -982,7 +984,7 @@ function TransferTab({ api, fleetId }: { api: FleetsApi; fleetId: number }) {
       />
 
       <div className="flex flex-col gap-1.5">
-        <label className="text-xs text-muted-foreground">
+        <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
           {t("newUi.sidebar.fleets.remotePathLabel")}
         </label>
         <Input
@@ -995,7 +997,7 @@ function TransferTab({ api, fleetId }: { api: FleetsApi; fleetId: number }) {
 
       {direction === "push" && (
         <div className="flex flex-col gap-1.5">
-          <label className="text-xs text-muted-foreground">
+          <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
             {t("newUi.sidebar.fleets.fileLabel")}
           </label>
           <Input
@@ -1093,9 +1095,7 @@ function InventoryTab({ api, fleetId }: { api: FleetsApi; fleetId: number }) {
       </Button>
 
       {loading ? (
-        <div className="flex items-center justify-center py-8 text-muted-foreground">
-          <Loader2 className="size-4 animate-spin" />
-        </div>
+        <LoadingState />
       ) : (
         <div className="flex flex-col gap-2">
           {entries.map((entry) => (
@@ -1190,7 +1190,7 @@ function PackagesTab({ api, fleetId }: { api: FleetsApi; fleetId: number }) {
   return (
     <div className="flex flex-col gap-3">
       <div className="flex flex-col gap-1.5">
-        <label className="text-xs text-muted-foreground">
+        <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
           {t("newUi.sidebar.fleets.packageActionLabel")}
         </label>
         <Select2
@@ -1212,7 +1212,7 @@ function PackagesTab({ api, fleetId }: { api: FleetsApi; fleetId: number }) {
 
       {action !== "upgrade-all" && (
         <div className="flex flex-col gap-1.5">
-          <label className="text-xs text-muted-foreground">
+          <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
             {t("newUi.sidebar.fleets.packageNameLabel")}
           </label>
           <Input
@@ -1366,9 +1366,7 @@ function FleetDetail({
 
       <div className="flex-1 min-h-0 overflow-y-auto p-2.5">
         {loadingMembers ? (
-          <div className="flex items-center justify-center py-8 text-muted-foreground">
-            <Loader2 className="size-4 animate-spin" />
-          </div>
+          <LoadingState />
         ) : members.length === 0 ? (
           <EmptyState
             icon={Server}
@@ -1509,7 +1507,9 @@ export function FleetsPanel({
 
   return (
     <div className="flex flex-col flex-1 min-h-0">
-      <div className="flex shrink-0 flex-col gap-2 border-b border-border px-3 py-2">
+      <div
+        className={`flex shrink-0 flex-col gap-2 border-b border-border px-3 py-2 ${TOOLBAR_FIT}`}
+      >
         <PanelSearch
           value={search}
           onChange={setSearch}
@@ -1551,9 +1551,7 @@ export function FleetsPanel({
       <PanelList
         empty={
           loading ? (
-            <div className="flex items-center justify-center py-8 text-muted-foreground">
-              <Loader2 className="size-4 animate-spin" />
-            </div>
+            <LoadingState />
           ) : (
             <EmptyState
               icon={Boxes}
