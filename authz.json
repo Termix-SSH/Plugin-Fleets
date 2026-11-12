@@ -1,0 +1,184 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Termix-SSH/Termix/main/scripts/authz/authz.schema.json",
+  "seed": [
+    {
+      "as": "owner",
+      "method": "POST",
+      "path": "/plugin-api/fleets",
+      "body": {
+        "name": "authz-own-name"
+      },
+      "capture": {
+        "fleets.item": "id"
+      }
+    }
+  ],
+  "routes": {
+    "GET /plugin-api/fleets": {
+      "access": "user",
+      "permission": "fleets.view"
+    },
+    "POST /plugin-api/fleets": {
+      "access": "user",
+      "permission": "fleets.manage"
+    },
+    "DELETE /plugin-api/fleets/:id": {
+      "access": "user",
+      "permission": "fleets.manage",
+      "resource": {
+        "kind": "own",
+        "fixture": "fleets.item"
+      },
+      "params": {
+        "id": "fleets.item"
+      },
+      "destructive": true
+    },
+    "PATCH /plugin-api/fleets/:id": {
+      "access": "user",
+      "permission": "fleets.manage",
+      "resource": {
+        "kind": "own",
+        "fixture": "fleets.item"
+      },
+      "params": {
+        "id": "fleets.item"
+      }
+    },
+    "POST /plugin-api/fleets/:id/execute": {
+      "access": "user",
+      "permission": "fleets.execute",
+      "resource": {
+        "kind": "own",
+        "fixture": "fleets.item"
+      },
+      "params": {
+        "id": "fleets.item"
+      },
+      "destructive": true,
+      "body": {
+        "command": "true"
+      }
+    },
+    "GET /plugin-api/fleets/:id/inventory": {
+      "access": "user",
+      "permission": "fleets.view",
+      "resource": {
+        "kind": "own",
+        "fixture": "fleets.item"
+      },
+      "params": {
+        "id": "fleets.item"
+      }
+    },
+    "POST /plugin-api/fleets/:id/inventory": {
+      "access": "user",
+      "permission": "fleets.execute",
+      "resource": {
+        "kind": "own",
+        "fixture": "fleets.item"
+      },
+      "params": {
+        "id": "fleets.item"
+      }
+    },
+    "GET /plugin-api/fleets/:id/members": {
+      "access": "user",
+      "permission": "fleets.view",
+      "resource": {
+        "kind": "own",
+        "fixture": "fleets.item"
+      },
+      "params": {
+        "id": "fleets.item"
+      }
+    },
+    "POST /plugin-api/fleets/:id/members": {
+      "access": "user",
+      "permission": "fleets.manage",
+      "resource": {
+        "kind": "own",
+        "fixture": "fleets.item"
+      },
+      "params": {
+        "id": "fleets.item"
+      },
+      "body": {
+        "hostId": "{{host}}"
+      }
+    },
+    "DELETE /plugin-api/fleets/:id/members/:hostId": {
+      "access": "user",
+      "permission": "fleets.manage",
+      "resource": {
+        "kind": "host",
+        "min": "connect"
+      },
+      "destructive": true,
+      "allowed": "any",
+      "note": "Names a id on the host, which the test host does not have; host access is still checked"
+    },
+    "POST /plugin-api/fleets/:id/packages": {
+      "access": "user",
+      "permission": "fleets.manage",
+      "resource": {
+        "kind": "own",
+        "fixture": "fleets.item"
+      },
+      "params": {
+        "id": "fleets.item"
+      },
+      "body": {
+        "action": "upgrade-all"
+      }
+    },
+    "POST /plugin-api/fleets/:id/share": {
+      "access": "user",
+      "permission": "fleets.manage",
+      "resource": {
+        "kind": "own",
+        "fixture": "fleets.item"
+      },
+      "params": {
+        "id": "fleets.item"
+      }
+    },
+    "POST /plugin-api/fleets/:id/transfer/pull": {
+      "access": "user",
+      "permission": "fleets.execute",
+      "resource": {
+        "kind": "own",
+        "fixture": "fleets.item"
+      },
+      "params": {
+        "id": "fleets.item"
+      },
+      "body": {
+        "remotePath": "/tmp/authz"
+      }
+    },
+    "POST /plugin-api/fleets/:id/transfer/push": {
+      "access": "user",
+      "permission": "fleets.execute",
+      "resource": {
+        "kind": "own",
+        "fixture": "fleets.item"
+      },
+      "params": {
+        "id": "fleets.item"
+      },
+      "body": {
+        "remotePath": "/tmp/authz"
+      },
+      "refuse400": "Needs an uploaded file; the fleet id is checked by the other transfer route"
+    },
+    "GET /plugin-api/fleets/share-targets/roles": {
+      "access": "user",
+      "permission": "fleets.manage"
+    },
+    "GET /plugin-api/fleets/share-targets/users": {
+      "access": "user",
+      "permission": "fleets.manage"
+    }
+  }
+}
