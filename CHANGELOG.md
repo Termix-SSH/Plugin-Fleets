@@ -2,6 +2,10 @@
 
 ## 1.2.1
 
+### Changed
+
+- Runs in its own process on Termix 26.11.2 and later, with no access to the server beyond what Termix allows it
+
 ### Fixed
 
 - Fleet commands keep filling $HOST, $USER and $INPUT values when Snippets runs in its own process
