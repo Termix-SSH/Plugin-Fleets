@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.1
+
+### Fixed
+
+- Fleet commands keep filling $HOST, $USER and $INPUT values when Snippets runs in its own process
+
 ## 1.2.0
 
 ### Added
